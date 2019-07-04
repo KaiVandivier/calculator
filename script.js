@@ -22,16 +22,36 @@ function newEquation(eq) {
 function loadButtons() {
   const buttons = document.querySelectorAll('button');
   buttons.forEach((button) => {
-    button.addEventListener('click', (e) => {
-      pressButton(e);
-    });
+    button.addEventListener('click', clickButton);
+    button.addEventListener('keyup', removeAnimation); // not firing
   });
 }
 
-function pressButton(e) {
+function loadKeyboard() {
+  window.addEventListener('keydown', pressKey);
+}
+
+function pressKey(e) {
+  const btn = document.querySelector(`button[data-key="${e.key}"]`);
+  if (btn) {
+    btn.classList.add('pressed');
+    window.addEventListener('keyup', () => removeAnimation(btn))
+    activateButton(btn);
+  }
+}
+
+function removeAnimation(btn) {
+  btn.classList.remove('pressed');
+}
+
+function clickButton(e) {
   const btn = e.target;
-  if (btn.className == "num") pressNum(btn.value);
-  else if (btn.className == "op") pressOp(btn.id);
+  if (btn) activateButton(btn);
+}
+
+function activateButton(btn) {
+  if (btn.className.includes("num")) pressNum(btn.value);
+  else if (btn.className.includes("op")) pressOp(btn.id);
   else if (btn.id == "clear") clearAll();
   else if (btn.id == "decimal") addDecimal();
   else if (btn.id == "equals") equals();
@@ -99,3 +119,4 @@ function operate(operator, n1, n2) {
 const eq = {};
 newEquation(eq);
 loadButtons();
+loadKeyboard();

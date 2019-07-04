@@ -65,3 +65,7 @@ body {
 #calculator button:active {
   transform: scale(0.95);
 }
+
+#calculator button.pressed {
+  transform: scale(0.95);
+}
