@@ -10,7 +10,6 @@ function loadButtons() {
   const buttons = document.querySelectorAll('button');
   buttons.forEach((button) => {
     button.addEventListener('click', clickButton);
-    button.addEventListener('keyup', removeAnimation); // not firing
   });
 }
 
@@ -46,11 +45,12 @@ function activateButton(btn) {
 
 function pressNum(num) {
   const display = document.querySelector('#display');
-  if (eq.n1 && eq.n2) {
+  if (eq.result) {
     newEquation(eq);
     clearDisplay();
   }
-  if (display.textContent === "0" || display.textContent == eq.n1) {
+  if (display.textContent === "0" 
+      || (eq.operator && display.textContent == eq.n1)) {
     display.textContent = num;
   } 
   else if (display.textContent.length < 9) display.textContent += num;
@@ -66,11 +66,11 @@ function pressOp(op) {
 
 function addDecimal() {
   const display = document.querySelector('#display');
-  if (eq.n1 && eq.n2) {
+  if (eq.result) {
     newEquation(eq);
     clearDisplay();
   }
-  if (display.textContent == eq.n1) clearDisplay(); 
+  if (eq.operator && display.textContent == eq.n1) clearDisplay(); 
   if (!display.textContent.includes('.') && display.textContent.length < 9) {
     display.textContent += '.';
   };
@@ -79,11 +79,12 @@ function addDecimal() {
 function equals() {
   const display = document.querySelector('#display');
   if (!eq.n2) eq.n2 = parseFloat(display.textContent);
-  const result = operate(eq.operator, eq.n1, eq.n2);
-  if (result !== null) display.textContent = 
-      (result.toString().length > 9) ? result.toExponential(3).toString()
-      : result.toString().slice(0,9);
-  // TODO: Make text display smarter (scientific notation, for example)
+  eq.result = (eq.operator && eq.n1 && eq.n2) ? operate(eq.operator, eq.n1, eq.n2)
+      : display.textContent;
+  if (eq.result !== null) display.textContent = 
+      (eq.result.toString().length > 9) ? eq.result.toExponential(3).toString()
+      : eq.result.toString().slice(0,9);
+  // TODO: Make text display smarter
 }
 
 function clearDisplay() {
