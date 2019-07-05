@@ -59,7 +59,7 @@ function pressNum(num) {
 function pressOp(op) {
   const display = document.querySelector('#display');
   if (eq.operator) equals();
-  if (eq.n2) newEquation(eq);
+  if (eq.result) newEquation(eq);
   if (!eq.operator) eq.operator = op;
   if (!eq.n1) eq.n1 = parseFloat(display.textContent);
 }
@@ -81,10 +81,17 @@ function equals() {
   if (!eq.n2) eq.n2 = parseFloat(display.textContent);
   eq.result = (eq.operator && eq.n1 && eq.n2) ? operate(eq.operator, eq.n1, eq.n2)
       : display.textContent;
-  if (eq.result !== null) display.textContent = 
-      (eq.result.toString().length > 9) ? eq.result.toExponential(3).toString()
-      : eq.result.toString().slice(0,9);
-  // TODO: Make text display smarter
+  if (eq.result !== null) {
+    display.textContent = formatResult(eq.result);
+  }
+}
+
+function formatResult(result) {
+  let formattedResult = 
+      ((Math.abs(result) >= 1e+9) || (Math.abs(result) < 1e-5 && result.toString().length > 9)) ?
+      result.toExponential(3).toString()
+      : result.toString().slice(0,9); 
+  return formattedResult;
 }
 
 function clearDisplay() {
